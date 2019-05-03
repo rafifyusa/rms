@@ -35,7 +35,7 @@ public class LoginServlet extends AbstractController
 
             if (user.getPassword().equals(userpass)) {
                 req.getSession().setAttribute("name", username);
-                resp.sendRedirect("index.jsp");
+                resp.sendRedirect(getAppName()+"/index.jsp");
             }
             else {
                 System.out.println("Invalid Password");

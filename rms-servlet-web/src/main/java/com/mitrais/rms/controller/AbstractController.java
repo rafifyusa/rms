@@ -18,4 +18,7 @@ public abstract class AbstractController extends HttpServlet
             return VIEW_PREFIX + path + VIEW_SUFFIX;
         }
     }
+    protected String getAppName(){
+        return "/rms-servlet-web";
+    }
 }

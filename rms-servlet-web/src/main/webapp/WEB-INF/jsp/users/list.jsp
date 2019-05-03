@@ -23,24 +23,76 @@
 <body>
     <div class="mdl-layout mdl-js-layout mdl-color--grey-100 box-center">
     	<main class="mdl-layout__content">
-    		<table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
-              <thead>
-                <tr>
-                  <th class="mdl-data-table__cell--non-numeric">User Name</th>
-                  <th>Password</th>
-                </tr>
-              </thead>
-              <tbody>
-              <c:forEach items = "${users}" var="user">
-                  <tr>
-                    <td class="mdl-data-table__cell--non-numeric"><c:out value = "${user.userName}"/></td>
-                    <td><c:out value = "${user.password}"/></td>
-                  </tr>
-              </c:forEach>
-              </tbody>
-            </table>
+                <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
+                    <h2 class="mdl-card__title-text">User List</h2>
+                </div>
+                <div class="mdl-card__supporting-text">
+                    <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+                        <thead>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">User Name</th>
+                            <th>Password</th>
+                            <th> Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <c:forEach items = "${users}" var="user">
+                            <tr>
+                                <td class="mdl-data-table__cell--non-numeric"><c:out value = "${user.userName}"/></td>
+                                <td><c:out value = "${user.password}"/></td>
+                                <td>
+                                    <button type="button" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" id="editButton<c:out value = "${user.id}"/>" onclick="showEditModal(<c:out value = "${user.id}"/>)">Edit</button>
+                                    <form action="UserServlet?action=delete&id=<c:out value = "${user.id}"/>" method="post">
+                                        <button type="submit" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+
+                            <dialog class="mdl-dialog" id="editModal<c:out value = "${user.id}"/>">
+                                <div class="mdl-dialog__content">
+                                    <form action="UserServlet?action=edit&id=<c:out value = "${user.id}"/>" method="post">
+                                        <div class="mdl-textfield mdl-js-textfield">
+                                            <input class="mdl-textfield__input" type="text" name="username" id="username<c:out value = "${user.id}"/>" />
+                                            <label class="mdl-textfield__label" for="username<c:out value = "${user.id}"/>"><c:out value = "${user.userName}"/></label>
+                                        </div>
+                                        <div class="mdl-textfield mdl-js-textfield">
+                                            <input class="mdl-textfield__input" type="password" name="userpass" id="userpass<c:out value = "${user.id}"/>" />
+                                            <label class="mdl-textfield__label" for="userpass<c:out value = "${user.id}"/>"><c:out value = "${user.password}"/></label>
+                                        </div>
+                                        <div class="mdl-card__actions mdl-card--border">
+                                            <button type="submit" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Save</button>
+                                            <button type="button" class="mdl-button close">Cancel</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </dialog>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+
+            <button type="button" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" id="insertButton" onclick="showInsertModal()">Add new user</button>
+
+            <dialog class="mdl-dialog" id="insertModal">
+                <div class="mdl-dialog__content">
+                    <form action="UserServlet?action=insert" method="post">
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <input class="mdl-textfield__input" type="text" name="username" id="username" />
+                            <label class="mdl-textfield__label" for="username">Username</label>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <input class="mdl-textfield__input" type="password" name="userpass" id="userpass" />
+                            <label class="mdl-textfield__label" for="userpass">Password</label>
+                        </div>
+                        <div class="mdl-card__actions mdl-card--border">
+                            <button type="submit" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Save</button>
+                            <button type="button" class="mdl-button close">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </dialog>
     	</main>
     </div>
-  <script src="js/scripts.js"></script>
+  <script src="/rms-servlet-web/js/scripts.js?2"></script>
 </body>
 </html>

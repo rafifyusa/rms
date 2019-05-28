@@ -34,6 +34,7 @@ public class LoginServlet extends AbstractController
         Optional<User> user = userDao.findByUserNameAndPassword(username,userpass);
         if (user.isPresent()){
             req.getSession().setAttribute("name", username);
+            req.getSession().setAttribute("id",user.get().getId());
             resp.sendRedirect(projectName + "/index.jsp");
         }
         else {

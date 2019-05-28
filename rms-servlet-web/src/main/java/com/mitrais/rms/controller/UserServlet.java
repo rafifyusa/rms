@@ -38,9 +38,13 @@ public class UserServlet extends AbstractController
             case "delete": {
                 Long id = Long.parseLong(req.getParameter("id"));
                 UserDao userDao = UserDaoImpl.getInstance();
-                boolean response = userDao.deleteById(id);
-                req.setAttribute("deleteResponse", response);
-
+                if (id != req.getSession().getAttribute("id")){
+                    boolean response = userDao.deleteById(id);
+                    req.setAttribute("deleteResponse", response);
+                }
+                else {
+                    req.setAttribute("deleteResponse", "false");
+                }
                 RequestDispatcher rd = findAllUserAndGetDispatcher(req,userDao);
                 rd.forward(req, resp);
                 //resp.sendRedirect(projectName + "/users/list");
@@ -58,7 +62,6 @@ public class UserServlet extends AbstractController
             case "insert": {
                 String username = req.getParameter("username");
                 String userpass = req.getParameter("userpass");
-
                 UserDao userDao = UserDaoImpl.getInstance();
                 boolean response = userDao.saveUser(username, userpass);
                 req.setAttribute("insertResponse", response);
@@ -68,10 +71,9 @@ public class UserServlet extends AbstractController
             }
         }
     }
-    RequestDispatcher findAllUserAndGetDispatcher(HttpServletRequest req, UserDao userDao) {
+    private RequestDispatcher findAllUserAndGetDispatcher(HttpServletRequest req, UserDao userDao) {
         List<User> users = userDao.findAll();
         req.setAttribute("users", users);
-        //resp.sendRedirect(projectName + "/users/list");
         String path = getTemplatePath(req.getServletPath()+"/list");
         return req.getRequestDispatcher(path);
     }

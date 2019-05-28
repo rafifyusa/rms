@@ -15,4 +15,8 @@ public interface UserDao extends Dao<User, Long>
      * @return user
      */
     Optional<User> findByUserName(String userName);
+    Optional<User> findByUserNameAndPassword(String userName, String password);
+    boolean deleteById(Long id);
+    boolean saveUser(String name, String password);
+    boolean updateUser(String newName, String newPassword, Long id);
 }

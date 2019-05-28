@@ -82,6 +82,25 @@ public class UserDaoImpl implements UserDao
     }
 
     @Override
+    public boolean saveUser(String name, String password){
+        try (Connection connection = DataSourceFactory.getConnection())
+        {
+            PreparedStatement stmt = connection.prepareStatement("INSERT INTO user VALUES (NULL, ?, ?)");
+            stmt.setString(1, name);
+            stmt.setString(2, password);
+            int i = stmt.executeUpdate();
+            if(i == 1) {
+                return true;
+            }
+        }
+        catch (SQLException ex)
+        {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
     public boolean update(User user)
     {
         try (Connection connection = DataSourceFactory.getConnection())
@@ -90,6 +109,26 @@ public class UserDaoImpl implements UserDao
             stmt.setString(1, user.getUserName());
             stmt.setString(2, user.getPassword());
             stmt.setString(3,user.getId().toString());
+            int i = stmt.executeUpdate();
+            if(i == 1) {
+                return true;
+            }
+        }
+        catch (SQLException ex)
+        {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateUser(String newName, String newPassword, Long id) {
+        try (Connection connection = DataSourceFactory.getConnection())
+        {
+            PreparedStatement stmt = connection.prepareStatement("UPDATE user SET user_name=?, password=? WHERE id=?");
+            stmt.setString(1, newName);
+            stmt.setString(2, newPassword);
+            stmt.setString(3, id.toString());
             int i = stmt.executeUpdate();
             if(i == 1) {
                 return true;
@@ -120,6 +159,20 @@ public class UserDaoImpl implements UserDao
         }
         return false;
     }
+    public boolean deleteById(Long id) {
+        try (Connection connection = DataSourceFactory.getConnection()){
+            PreparedStatement stmt = connection.prepareStatement("DELETE FROM user WHERE id=?");
+            stmt.setLong(1, id);
+            int i = stmt.executeUpdate();
+            if(i == 1) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return false;
+    }
 
     @Override
     public Optional<User> findByUserName(String userName)
@@ -139,7 +192,27 @@ public class UserDaoImpl implements UserDao
         {
             ex.printStackTrace();
         }
+        return Optional.empty();
+    }
 
+    @Override
+    public Optional<User> findByUserNameAndPassword(String userName, String password) {
+        try (Connection connection = DataSourceFactory.getConnection())
+        {
+            PreparedStatement stmt = connection.prepareStatement("SELECT * FROM user WHERE user_name=? and password=?");
+            stmt.setString(1, userName);
+            stmt.setString(2, password);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next())
+            {
+                User user = new User(rs.getLong("id"), rs.getString("user_name"), rs.getString("password"));
+                return Optional.of(user);
+            }
+        }
+        catch (SQLException ex)
+        {
+            ex.printStackTrace();
+        }
         return Optional.empty();
     }
 

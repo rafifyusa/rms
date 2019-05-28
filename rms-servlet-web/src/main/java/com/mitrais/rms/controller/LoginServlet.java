@@ -10,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 @WebServlet("/login")
 public class LoginServlet extends AbstractController
@@ -30,28 +31,16 @@ public class LoginServlet extends AbstractController
         String userpass = req.getParameter("userpass");
 
         UserDao userDao = UserDaoImpl.getInstance();
-        if (userDao.findByUserName(username).isPresent()){
-            User user = userDao.findByUserName(username).get();
-
-            if (user.getPassword().equals(userpass)) {
-                req.getSession().setAttribute("name", username);
-                resp.sendRedirect(getAppName()+"/index.jsp");
-            }
-            else {
-                System.out.println("Invalid Password");
-                req.setAttribute("errorMessage", "Invalid Password");
-                String path = getTemplatePath(req.getServletPath());
-                RequestDispatcher rd = req.getRequestDispatcher(path);
-                rd.include(req, resp);
-            }
+        Optional<User> user = userDao.findByUserNameAndPassword(username,userpass);
+        if (user.isPresent()){
+            req.getSession().setAttribute("name", username);
+            resp.sendRedirect(projectName + "/index.jsp");
         }
         else {
-            System.out.println("Invalid User");
-            req.setAttribute("errorMessage", "Invalid User");
+            req.setAttribute("errorMessage", "Invalid login info");
             String path = getTemplatePath(req.getServletPath());
             RequestDispatcher rd = req.getRequestDispatcher(path);
             rd.include(req, resp);
         }
-
     }
 }

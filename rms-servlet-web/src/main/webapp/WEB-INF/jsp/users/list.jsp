@@ -71,7 +71,27 @@
                     </table>
                 </div>
 
+
             <button type="button" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" id="insertButton" onclick="showInsertModal()">Add new user</button>
+
+            <c:if test="${editResponse}">
+                <span style="color: red"> Edit Successful</span>
+            </c:if>
+            <c:if test="${!editResponse && editResponse != null}">
+                <span style="color: red"> Edit Failed</span>
+            </c:if>
+            <c:if test="${insertResponse}">
+                <span style="color: red"> Insert Successful</span>
+            </c:if>
+            <c:if test="${!insertResponse && insertResponse != null}">
+                <span style="color: red"> Insert Failed</span>
+            </c:if>
+            <c:if test="${deleteResponse}">
+                <span style="color: red"> Delete Successful</span>
+            </c:if>
+            <c:if test="${!deleteResponse && deleteResponse != null}">
+                <span style="color: red"> Delete Failed</span>
+            </c:if>
 
             <dialog class="mdl-dialog" id="insertModal">
                 <div class="mdl-dialog__content">

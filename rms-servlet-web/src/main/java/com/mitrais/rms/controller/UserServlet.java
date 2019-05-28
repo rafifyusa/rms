@@ -38,47 +38,42 @@ public class UserServlet extends AbstractController
             case "delete": {
                 Long id = Long.parseLong(req.getParameter("id"));
                 UserDao userDao = UserDaoImpl.getInstance();
+                boolean response = userDao.deleteById(id);
+                req.setAttribute("deleteResponse", response);
 
-                if (userDao.find(id).isPresent()){
-                    try {
-                        User user = userDao.find(id).get();
-                        userDao.delete(user);
-
-                        resp.sendRedirect(getAppName()+ "/users/list");
-                    }
-                    catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
+                RequestDispatcher rd = findAllUserAndGetDispatcher(req,userDao);
+                rd.forward(req, resp);
+                //resp.sendRedirect(projectName + "/users/list");
                 break;
             }
             case "edit" : {
                 Long id = Long.parseLong(req.getParameter("id"));
                 UserDao userDao = UserDaoImpl.getInstance();
-
-                if (userDao.find(id).isPresent()){
-                    User user = userDao.find(id).get();
-                    user.setUserName(req.getParameter("username"));
-                    user.setPassword(req.getParameter("userpass"));
-                    userDao.update(user);
-                    resp.sendRedirect(getAppName()+ "/users/list");
-                }
+                boolean response = userDao.updateUser(req.getParameter("username"), req.getParameter("userpass"), id);
+                req.setAttribute("editResponse", response);
+                RequestDispatcher rd = findAllUserAndGetDispatcher(req, userDao);
+                rd.forward(req, resp);
                 break;
             }
             case "insert": {
                 String username = req.getParameter("username");
-                System.out.println("New User : " + username);
                 String userpass = req.getParameter("userpass");
 
-                User newUser = new User(username, userpass);
-
                 UserDao userDao = UserDaoImpl.getInstance();
-                userDao.save(newUser);
-
-                resp.sendRedirect(getAppName()+ "/users/list");
+                boolean response = userDao.saveUser(username, userpass);
+                req.setAttribute("insertResponse", response);
+                RequestDispatcher rd = findAllUserAndGetDispatcher(req,userDao);
+                rd.forward(req, resp);
                 break;
             }
         }
+    }
+    RequestDispatcher findAllUserAndGetDispatcher(HttpServletRequest req, UserDao userDao) {
+        List<User> users = userDao.findAll();
+        req.setAttribute("users", users);
+        //resp.sendRedirect(projectName + "/users/list");
+        String path = getTemplatePath(req.getServletPath()+"/list");
+        return req.getRequestDispatcher(path);
     }
 
 }
